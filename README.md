@@ -1,6 +1,7 @@
 # Habit Tracker App
 
-A simple full-stack application for tracking daily habits, built with React and Node.js.
+This is a simple full-stack application for helping people improve their lives by helping them track their daily habits.
+- Built with React, Node.js, and Chakra UI
 
 ## Features
 
