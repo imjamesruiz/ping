@@ -1,0 +1,53 @@
+.habit-calendar {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+.habit-calendar__tile {
+  padding: 1em 0.5em;
+  position: relative;
+}
+
+.habit-calendar__tile.completed {
+  background-color: #f0fff4 !important;
+  color: #2f855a;
+}
+
+.habit-calendar__tile:enabled:hover,
+.habit-calendar__tile:enabled:focus {
+  background-color: #fefcbf !important;
+}
+
+.habit-calendar__tile--active {
+  background-color: #fefcbf !important;
+}
+
+.habit-calendar__tile--now {
+  background-color: #fefcbf !important;
+}
+
+.habit-calendar__month-view__days__day--weekend {
+  color: #e53e3e;
+}
+
+.habit-calendar__month-view__days__day--neighboringMonth {
+  color: #cbd5e0;
+}
+
+.habit-calendar__navigation button:enabled:hover,
+.habit-calendar__navigation button:enabled:focus {
+  background-color: #fefcbf !important;
+}
+
+.habit-calendar__month-view__weekdays {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #4a5568;
+}
+
+.habit-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+  text-align: center;
+} 
