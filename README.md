@@ -1,6 +1,6 @@
-# HabitTracker
+# Habit Tracker App
 
-A simple full-stack app used for tracking daily habits and staying on that grind built with React and Node.js.
+A simple full-stack application for tracking daily habits, built with React and Node.js.
 
 ## Features
 
