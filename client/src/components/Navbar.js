@@ -1,69 +1,101 @@
 import React from 'react';
-import { Box, Flex, Link, useColorModeValue } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  Container,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import Logo from './Logo';
 
 function Navbar() {
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const textColor = useColorModeValue('gray.600', 'white');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const location = useLocation();
+
+  const navItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Habits', path: '/habits' },
+    { label: 'Add Habit', path: '/add' },
+    { label: 'Statistics', path: '/stats' },
+    { label: 'Calendar', path: '/calendar' },
+  ];
 
   return (
-    <Box 
-      bg={bgColor} 
-      px={4} 
-      borderBottom="1px" 
-      borderColor={borderColor}
+    <AppBar
       position="sticky"
-      top={0}
-      zIndex={1000}
+      elevation={0}
+      sx={{
+        backgroundColor: 'background.paper',
+        borderBottom: '1px solid',
+        borderColor: 'primary.light',
+      }}
     >
-      <Flex h={16} alignItems="center" justifyContent="space-between">
-        <Link
-          as={RouterLink}
-          to="/"
-          fontSize="xl"
-          fontWeight="bold"
-          color="yellow.500"
-          _hover={{ textDecoration: 'none', color: 'yellow.600' }}
+      <Container maxWidth="lg">
+        <Toolbar
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            minHeight: 64,
+          }}
         >
-          HabitTracker
-        </Link>
-        <Flex gap={4}>
-          <Link
-            as={RouterLink}
+          <Box
+            component={RouterLink}
             to="/"
-            color={textColor}
-            _hover={{ textDecoration: 'none', color: 'yellow.500' }}
+            sx={{
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+            }}
           >
-            Habits
-          </Link>
-          <Link
-            as={RouterLink}
-            to="/add"
-            color={textColor}
-            _hover={{ textDecoration: 'none', color: 'yellow.500' }}
+            <Logo size={isMobile ? 'small' : 'medium'} />
+          </Box>
+
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
           >
-            Add Habit
-          </Link>
-          <Link
-            as={RouterLink}
-            to="/stats"
-            color={textColor}
-            _hover={{ textDecoration: 'none', color: 'yellow.500' }}
-          >
-            Statistics
-          </Link>
-          <Link
-            as={RouterLink}
-            to="/calendar"
-            color={textColor}
-            _hover={{ textDecoration: 'none', color: 'yellow.500' }}
-          >
-            Calendar
-          </Link>
-        </Flex>
-      </Flex>
-    </Box>
+            {navItems.map((item) => (
+              <Button
+                key={item.path}
+                component={RouterLink}
+                to={item.path}
+                sx={{
+                  color: 'text.primary',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: location.pathname === item.path ? '100%' : '0%',
+                    height: '2px',
+                    backgroundColor: 'primary.main',
+                    transition: 'width 0.3s ease',
+                  },
+                  '&:hover::after': {
+                    width: '100%',
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(74, 103, 65, 0.08)',
+                  },
+                }}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
 
