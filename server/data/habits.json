@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "_id": "1743914977027",
+    "name": "drink water",
+    "description": "1 gallon per day",
+    "frequency": "daily",
+    "completedDates": [
+      "2025-04-06"
+    ],
+    "createdAt": "2025-04-06T04:49:37.027Z"
+  },
+  {
+    "_id": "1743915009869",
+    "name": "meditate",
+    "description": "30 min",
+    "frequency": "weekly",
+    "completedDates": [
+      "2025-04-06"
+    ],
+    "createdAt": "2025-04-06T04:50:09.869Z"
+  },
+  {
+    "_id": "1743915075429",
+    "name": "gym",
+    "description": "chest/back",
+    "frequency": "daily",
+    "completedDates": [],
+    "createdAt": "2025-04-06T04:51:15.429Z"
+  },
+  {
+    "_id": "1744061739112",
+    "name": "code",
+    "description": "1 hour",
+    "frequency": "daily",
+    "completedDates": [],
+    "createdAt": "2025-04-07T21:35:39.112Z"
+  }
+]
