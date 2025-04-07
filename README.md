@@ -1,15 +1,15 @@
-# Habit Tracker App 🧘‍♀️
+# Plan(t) - Habit Tracking App 🌱
 
-This is a simple full-stack application for helping people improve their lives by helping them track their daily habits. 
-- Built with React, Node.js, and Chakra UI 
+Plan(t) is a beautiful, plant-themed habit tracking application that helps you grow positive habits in your life. Just like plants need consistent care to grow, habits need regular attention to become part of your routine.
 
 ## Features
 
-- Create and manage habits
-- Track habit completion
-- View habit statistics
-- Daily, weekly, and monthly habit tracking
-- Modern and responsive UI
+- **Beautiful Plant-Themed UI**: Enjoy a calming, nature-inspired interface
+- **Habit Management**: Create, track, and manage your habits
+- **Multiple Tracking Frequencies**: Track habits daily, weekly, or monthly
+- **Visual Progress Tracking**: See your habit growth with calendar and statistics views
+- **Motivational Quotes**: Get inspired with wisdom from habit experts like James Clear
+- **Responsive Design**: Works on desktop and mobile devices
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ This is a simple full-stack application for helping people improve their lives b
 1. Start the backend server:
    ```bash
    cd server
-   npm run dev
+   npm start
    ```
 
 2. Start the frontend development server:
@@ -51,7 +51,8 @@ This is a simple full-stack application for helping people improve their lives b
 
 - Frontend:
   - React
-  - Chakra UI
+  - Material UI
+  - Framer Motion (for animations)
   - React Router
   - Axios
 
@@ -66,4 +67,20 @@ This is a simple full-stack application for helping people improve their lives b
 - POST `/api/habits` - Create a new habit
 - PUT `/api/habits/:id` - Update a habit
 - DELETE `/api/habits/:id` - Delete a habit
-- POST `/api/habits/:id/complete` - Mark a habit as complete 
+- POST `/api/habits/:id/complete` - Mark a habit as complete
+
+## Project Structure
+
+- `client/` - React frontend application
+  - `src/components/` - React components
+  - `src/styles/` - Theme and styling
+- `server/` - Node.js backend application
+  - `data/` - JSON file storage for habits
+
+## Recent Updates
+
+- Rebranded to "Plan(t)" with a plant-themed design
+- Added a beautiful home page with feature cards
+- Improved habit tracking functionality
+- Enhanced error handling and user feedback
+- Added success notifications for better user experience

@@ -2,20 +2,18 @@ import React, { useState } from 'react';
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  Textarea,
-  VStack,
-  useToast,
-  Heading,
-  useColorModeValue,
-  Card,
-  CardBody,
+  TextField,
+  MenuItem,
   Container,
-} from '@chakra-ui/react';
+  Typography,
+  Paper,
+  Stack,
+  InputAdornment,
+  Alert,
+  Snackbar,
+} from '@mui/material';
 import { motion } from 'framer-motion';
+import { LocalFlorist as FlowerIcon, Grass as GrassIcon, CalendarMonth as CalendarIcon } from '@mui/icons-material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,12 +25,9 @@ function AddHabit() {
     description: '',
     frequency: 'daily',
   });
-  const toast = useToast();
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('yellow.200', 'yellow.700');
-  const hoverBg = useColorModeValue('yellow.50', 'yellow.900');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,108 +39,164 @@ function AddHabit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       await axios.post('http://localhost:5000/api/habits', formData);
-      toast({
-        title: 'Habit created successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate('/');
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/habits');
+      }, 1500);
     } catch (error) {
-      toast({
-        title: 'Error creating habit',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error('Error creating habit:', error);
+      setError(error.response?.data?.message || 'Failed to create habit. Please try again.');
     }
   };
 
   return (
-    <Container maxW="container.md" py={8}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
       <MotionBox
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card
-          bg={bgColor}
-          borderWidth="2px"
-          borderColor={borderColor}
-          _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
-          transition="all 0.2s"
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            background: 'rgba(74, 103, 65, 0.05)',
+            border: '1px solid',
+            borderColor: 'primary.light',
+          }}
         >
-          <CardBody>
-            <Heading 
-              mb={6} 
-              bgGradient="linear(to-r, yellow.400, yellow.600)" 
-              bgClip="text"
-              textShadow="2px 2px 4px rgba(0,0,0,0.1)"
+          <Stack spacing={4}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: 'Comfortaa',
+                color: 'primary.main',
+                fontWeight: 600,
+                textAlign: 'center',
+              }}
             >
-              Add New Habit
-            </Heading>
+              Plant a New Habit
+            </Typography>
+
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit}>
-              <VStack spacing={6}>
-                <FormControl isRequired>
-                  <FormLabel color="gray.700">Habit Name</FormLabel>
-                  <Input
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter habit name"
-                    borderColor={borderColor}
-                    _hover={{ borderColor: 'yellow.400' }}
-                    _focus={{ borderColor: 'yellow.500', boxShadow: '0 0 0 1px yellow.500' }}
-                  />
-                </FormControl>
+              <Stack spacing={3}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Habit Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="What habit would you like to grow?"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <FlowerIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
 
-                <FormControl>
-                  <FormLabel color="gray.700">Description</FormLabel>
-                  <Textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Enter habit description"
-                    borderColor={borderColor}
-                    _hover={{ borderColor: 'yellow.400' }}
-                    _focus={{ borderColor: 'yellow.500', boxShadow: '0 0 0 1px yellow.500' }}
-                    rows={4}
-                  />
-                </FormControl>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  label="Description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Describe how this habit will help you grow..."
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <GrassIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
 
-                <FormControl isRequired>
-                  <FormLabel color="gray.700">Frequency</FormLabel>
-                  <Select 
-                    name="frequency" 
-                    value={formData.frequency} 
-                    onChange={handleChange}
-                    borderColor={borderColor}
-                    _hover={{ borderColor: 'yellow.400' }}
-                    _focus={{ borderColor: 'yellow.500', boxShadow: '0 0 0 1px yellow.500' }}
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </Select>
-                </FormControl>
-
-                <Button 
-                  type="submit" 
-                  colorScheme="yellow" 
-                  width="full"
-                  size="lg"
-                  _hover={{ transform: 'scale(1.02)', boxShadow: 'lg' }}
-                  transition="all 0.2s"
+                <TextField
+                  required
+                  fullWidth
+                  select
+                  label="Growth Frequency"
+                  name="frequency"
+                  value={formData.frequency}
+                  onChange={handleChange}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CalendarIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover fieldset': {
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
                 >
-                  Add Habit
+                  <MenuItem value="daily">Daily Growth</MenuItem>
+                  <MenuItem value="weekly">Weekly Growth</MenuItem>
+                  <MenuItem value="monthly">Monthly Growth</MenuItem>
+                </TextField>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    mt: 2,
+                    py: 1.5,
+                    background: 'linear-gradient(45deg, #4A6741 30%, #6B8C5F 90%)',
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #2C3E28 30%, #4A6741 90%)',
+                    },
+                  }}
+                >
+                  Plant This Habit
                 </Button>
-              </VStack>
+              </Stack>
             </form>
-          </CardBody>
-        </Card>
+          </Stack>
+        </Paper>
       </MotionBox>
+
+      <Snackbar
+        open={success}
+        autoHideDuration={1500}
+        onClose={() => setSuccess(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          Habit planted successfully! Redirecting to your garden...
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

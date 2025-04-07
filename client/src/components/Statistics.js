@@ -1,47 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  VStack,
-  HStack,
-  Text,
-  Button,
-  useToast,
-  Heading,
-  useColorModeValue,
-  Card,
-  CardBody,
-  CardHeader,
   Container,
-  SimpleGrid,
-  Progress,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  Badge,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton,
-  useDisclosure,
-  Flex,
-} from '@chakra-ui/react';
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  LinearProgress,
+  Stack,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  useTheme,
+} from '@mui/material';
 import { motion } from 'framer-motion';
+import { LocalFlorist, Delete, TrendingUp, WaterDrop } from '@mui/icons-material';
 import axios from 'axios';
 
 const MotionBox = motion(Box);
 
 function Statistics() {
   const [habits, setHabits] = useState([]);
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
-  
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('yellow.200', 'yellow.700');
+  const [openDialog, setOpenDialog] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     fetchHabits();
@@ -52,37 +37,19 @@ function Statistics() {
       const response = await axios.get('http://localhost:5000/api/habits');
       setHabits(response.data);
     } catch (error) {
-      toast({
-        title: 'Error fetching habits',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error('Error fetching habits:', error);
     }
   };
 
   const handleClearAllHabits = async () => {
     try {
-      // Delete all habits
       await Promise.all(
         habits.map(habit => axios.delete(`http://localhost:5000/api/habits/${habit._id}`))
       );
-      
       setHabits([]);
-      toast({
-        title: 'All habits cleared',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
+      setOpenDialog(false);
     } catch (error) {
-      toast({
-        title: 'Error clearing habits',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error('Error clearing habits:', error);
     }
   };
 
@@ -108,27 +75,43 @@ function Statistics() {
     return Math.round(totalRate / habits.length);
   };
 
+  const getGrowthStage = (rate) => {
+    if (rate >= 90) return { icon: <LocalFlorist sx={{ color: '#4A6741' }} />, label: 'Blooming' };
+    if (rate >= 70) return { icon: <LocalFlorist sx={{ color: '#6B8C5F' }} />, label: 'Growing' };
+    if (rate >= 40) return { icon: <WaterDrop sx={{ color: '#A9BFA6' }} />, label: 'Sprouting' };
+    return { icon: <WaterDrop sx={{ color: '#A9BFA6' }} />, label: 'Seedling' };
+  };
+
   return (
-    <Container maxW="container.xl" py={8}>
-      <Flex justify="space-between" align="center" mb={8}>
-        <Heading 
-          size="xl" 
-          bgGradient="linear(to-r, yellow.400, yellow.600)" 
-          bgClip="text"
-          textShadow="2px 2px 4px rgba(0,0,0,0.1)"
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
+        <Typography
+          variant="h3"
+          sx={{
+            background: 'linear-gradient(45deg, #4A6741 30%, #6B8C5F 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 'bold',
+          }}
         >
           Statistics
-        </Heading>
+        </Typography>
         <Button
-          colorScheme="red"
-          variant="outline"
-          onClick={onOpen}
-          _hover={{ transform: 'scale(1.05)', boxShadow: 'lg' }}
-          transition="all 0.2s"
+          variant="outlined"
+          color="error"
+          startIcon={<Delete />}
+          onClick={() => setOpenDialog(true)}
+          sx={{
+            '&:hover': {
+              transform: 'scale(1.05)',
+              boxShadow: 3,
+            },
+            transition: 'all 0.2s',
+          }}
         >
           Clear All Habits
         </Button>
-      </Flex>
+      </Stack>
 
       <MotionBox
         initial={{ opacity: 0, y: 20 }}
@@ -136,107 +119,141 @@ function Statistics() {
         transition={{ duration: 0.5 }}
       >
         <Card
-          bg={bgColor}
-          borderWidth="2px"
-          borderColor={borderColor}
-          _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
-          transition="all 0.2s"
+          sx={{
+            mb: 4,
+            border: '2px solid',
+            borderColor: '#4A6741',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+              boxShadow: 6,
+            },
+            transition: 'all 0.2s',
+          }}
         >
-          <CardHeader bg="yellow.50" borderBottom="2px" borderColor={borderColor}>
-            <Heading 
-              size="lg" 
-              bgGradient="linear(to-r, yellow.400, yellow.600)" 
-              bgClip="text"
-              textShadow="2px 2px 4px rgba(0,0,0,0.1)"
-            >
-              Overall Progress
-            </Heading>
-          </CardHeader>
-          <CardBody>
-            <VStack spacing={6} align="stretch">
-              <Stat>
-                <StatLabel>Overall Completion Rate</StatLabel>
-                <StatNumber>{calculateOverallCompletionRate()}%</StatNumber>
-                <StatHelpText>Average completion rate across all habits</StatHelpText>
-              </Stat>
-              <Progress 
-                value={calculateOverallCompletionRate()} 
-                colorScheme="yellow"
-                size="lg"
-                borderRadius="full"
+          <CardHeader
+            title="Overall Progress"
+            sx={{
+              bgcolor: 'rgba(74, 103, 65, 0.1)',
+              borderBottom: '2px solid',
+              borderColor: '#4A6741',
+            }}
+          />
+          <CardContent>
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="h4" color="primary" gutterBottom>
+                  {calculateOverallCompletionRate()}%
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Average completion rate across all habits
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant="determinate"
+                value={calculateOverallCompletionRate()}
+                sx={{
+                  height: 10,
+                  borderRadius: 5,
+                  bgcolor: 'rgba(74, 103, 65, 0.1)',
+                  '& .MuiLinearProgress-bar': {
+                    bgcolor: '#4A6741',
+                  },
+                }}
               />
-            </VStack>
-          </CardBody>
+            </Stack>
+          </CardContent>
         </Card>
       </MotionBox>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mt={8}>
-        {habits.map((habit) => (
-          <MotionBox
-            key={habit._id}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Card
-              bg={bgColor}
-              borderWidth="2px"
-              borderColor={borderColor}
-              _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
-              transition="all 0.2s"
-            >
-              <CardBody>
-                <VStack align="stretch" spacing={4}>
-                  <HStack justify="space-between">
-                    <Heading size="md">{habit.name}</Heading>
-                    <Badge colorScheme="yellow">{habit.frequency}</Badge>
-                  </HStack>
-                  {habit.description && (
-                    <Text color="gray.600">{habit.description}</Text>
-                  )}
-                  <Progress 
-                    value={calculateCompletionRate(habit)} 
-                    colorScheme="yellow"
-                    size="sm"
-                    borderRadius="full"
-                  />
-                  <Stat>
-                    <StatLabel>Completion Rate</StatLabel>
-                    <StatNumber>{calculateCompletionRate(habit)}%</StatNumber>
-                    <StatHelpText>Based on {habit.frequency} frequency</StatHelpText>
-                  </Stat>
-                </VStack>
-              </CardBody>
-            </Card>
-          </MotionBox>
-        ))}
-      </SimpleGrid>
+      <Grid container spacing={3}>
+        {habits.map((habit) => {
+          const completionRate = calculateCompletionRate(habit);
+          const growthStage = getGrowthStage(completionRate);
+          
+          return (
+            <Grid item xs={12} md={6} lg={4} key={habit._id}>
+              <MotionBox
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card
+                  sx={{
+                    height: '100%',
+                    border: '2px solid',
+                    borderColor: '#4A6741',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 6,
+                    },
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <CardContent>
+                    <Stack spacing={2}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography variant="h6">{habit.name}</Typography>
+                        <Chip
+                          icon={growthStage.icon}
+                          label={growthStage.label}
+                          sx={{
+                            bgcolor: 'rgba(74, 103, 65, 0.1)',
+                            color: '#4A6741',
+                            '& .MuiChip-icon': {
+                              color: 'inherit',
+                            },
+                          }}
+                        />
+                      </Stack>
+                      {habit.description && (
+                        <Typography variant="body2" color="text.secondary">
+                          {habit.description}
+                        </Typography>
+                      )}
+                      <Box>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                          <Typography variant="body2" color="text.secondary">
+                            Completion Rate
+                          </Typography>
+                          <Typography variant="body2" color="primary">
+                            {completionRate}%
+                          </Typography>
+                        </Stack>
+                        <LinearProgress
+                          variant="determinate"
+                          value={completionRate}
+                          sx={{
+                            height: 8,
+                            borderRadius: 4,
+                            bgcolor: 'rgba(74, 103, 65, 0.1)',
+                            '& .MuiLinearProgress-bar': {
+                              bgcolor: '#4A6741',
+                            },
+                          }}
+                        />
+                      </Box>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </MotionBox>
+            </Grid>
+          );
+        })}
+      </Grid>
 
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Clear All Habits
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              Are you sure you want to delete all habits? This action cannot be undone.
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={handleClearAllHabits} ml={3}>
-                Clear All
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Clear All Habits</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete all your habits? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleClearAllHabits} color="error" variant="contained">
+            Delete All
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

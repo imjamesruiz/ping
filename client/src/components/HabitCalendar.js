@@ -2,33 +2,25 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
-  Heading,
+  Typography,
   Select,
+  MenuItem,
   Button,
-  useToast,
-  VStack,
-  HStack,
-  Text,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
+  Stack,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   List,
   ListItem,
-  Badge,
-  useColorModeValue,
-} from '@chakra-ui/react';
+  ListItemText,
+  Chip,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
 import Calendar from 'react-calendar';
+import { LocalFlorist as FlowerIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import axios from 'axios';
 import 'react-calendar/dist/Calendar.css';
 import './HabitCalendar.css';
@@ -39,12 +31,7 @@ function HabitCalendar() {
   const [completionDates, setCompletionDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
-  
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('yellow.200', 'yellow.700');
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchHabits();
@@ -70,12 +57,7 @@ function HabitCalendar() {
       const response = await axios.get('http://localhost:5000/api/habits');
       setHabits(response.data);
     } catch (error) {
-      toast({
-        title: 'Error fetching habits',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error('Error fetching habits:', error);
     }
   };
 
@@ -95,20 +77,9 @@ function HabitCalendar() {
         ));
       }
       setCompletionDates([]);
-      toast({
-        title: 'History cleared successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
+      setIsClearDialogOpen(false);
     } catch (error) {
-      toast({
-        title: 'Error clearing history',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error('Error clearing history:', error);
     }
   };
 
@@ -123,47 +94,55 @@ function HabitCalendar() {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
-      <VStack spacing={8} align="stretch">
-        <Heading 
-          size="xl" 
-          bgGradient="linear(to-r, yellow.400, yellow.600)" 
-          bgClip="text"
-          textAlign="center"
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Stack spacing={4}>
+        <Typography
+          variant="h4"
+          sx={{
+            fontFamily: 'Comfortaa',
+            color: 'primary.main',
+            fontWeight: 600,
+            textAlign: 'center',
+          }}
         >
-          Habit Calendar
-        </Heading>
+          Growth Calendar
+        </Typography>
 
-        <HStack spacing={4} justify="center">
-          <Select
-            placeholder="Select a habit"
-            value={selectedHabit}
-            onChange={(e) => setSelectedHabit(e.target.value)}
-            maxW="300px"
-          >
-            <option value="">All Habits</option>
-            {habits.map(habit => (
-              <option key={habit._id} value={habit._id}>
-                {habit.name}
-              </option>
-            ))}
-          </Select>
+        <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Select a Habit</InputLabel>
+            <Select
+              value={selectedHabit}
+              label="Select a Habit"
+              onChange={(e) => setSelectedHabit(e.target.value)}
+            >
+              <MenuItem value="">All Habits</MenuItem>
+              {habits.map(habit => (
+                <MenuItem key={habit._id} value={habit._id}>
+                  {habit.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Button
-            colorScheme="red"
-            onClick={onOpen}
-            isDisabled={!selectedHabit}
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={() => setIsClearDialogOpen(true)}
+            disabled={!selectedHabit}
           >
             Clear History
           </Button>
-        </HStack>
+        </Stack>
 
-        <Box 
-          bg={bgColor}
-          p={6} 
-          borderRadius="lg" 
-          boxShadow="lg"
-          borderWidth="2px"
-          borderColor={borderColor}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            background: 'rgba(74, 103, 65, 0.05)',
+            border: '1px solid',
+            borderColor: 'primary.light',
+          }}
         >
           <Calendar
             value={completionDates.map(date => new Date(date))}
@@ -178,68 +157,82 @@ function HabitCalendar() {
               const dateStr = date.toISOString().split('T')[0];
               if (completionDates.includes(dateStr)) {
                 return (
-                  <Text fontSize="xs" color="green.500">
-                    ✓
-                  </Text>
+                  <FlowerIcon
+                    sx={{
+                      fontSize: '1rem',
+                      color: 'success.main',
+                      position: 'absolute',
+                      bottom: '2px',
+                      right: '2px',
+                    }}
+                  />
                 );
               }
               return null;
             }}
           />
-        </Box>
-      </VStack>
+        </Paper>
+      </Stack>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            Completed Habits for {selectedDate?.toLocaleDateString()}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <List spacing={3}>
-              {selectedDate && getCompletedHabitsForDate(selectedDate).map(habit => (
-                <ListItem key={habit._id} display="flex" alignItems="center" justifyContent="space-between">
-                  <Text>{habit.name}</Text>
-                  <Badge colorScheme="green">Completed</Badge>
-                </ListItem>
-              ))}
-              {selectedDate && getCompletedHabitsForDate(selectedDate).length === 0 && (
-                <Text color="gray.500">No habits completed on this date</Text>
-              )}
-            </List>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
+      <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
       >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Clear Habit History
-            </AlertDialogHeader>
+        <DialogTitle>
+          <Typography variant="h6" sx={{ fontFamily: 'Comfortaa' }}>
+            Growth on {selectedDate?.toLocaleDateString()}
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <List>
+            {selectedDate && getCompletedHabitsForDate(selectedDate).map(habit => (
+              <ListItem key={habit._id}>
+                <ListItemText primary={habit.name} />
+                <Chip
+                  icon={<FlowerIcon />}
+                  label="Completed"
+                  color="success"
+                  size="small"
+                />
+              </ListItem>
+            ))}
+            {selectedDate && getCompletedHabitsForDate(selectedDate).length === 0 && (
+              <Typography color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+                No habits completed on this date
+              </Typography>
+            )}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
-            <AlertDialogBody>
-              Are you sure you want to clear the completion history for{' '}
-              {selectedHabit === 'all' ? 'all habits' : habits.find(h => h._id === selectedHabit)?.name}?
-              This action cannot be undone.
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={handleClearHistory} ml={3}>
-                Clear History
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+      <Dialog
+        open={isClearDialogOpen}
+        onClose={() => setIsClearDialogOpen(false)}
+      >
+        <DialogTitle>
+          <Typography variant="h6" sx={{ fontFamily: 'Comfortaa' }}>
+            Clear Growth History
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to clear the completion history for{' '}
+            {selectedHabit === 'all' ? 'all habits' : habits.find(h => h._id === selectedHabit)?.name}?
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsClearDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleClearHistory} color="error">
+            Clear History
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

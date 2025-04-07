@@ -8,7 +8,11 @@ const app = express();
 const DATA_FILE = path.join(__dirname, 'data', 'habits.json');
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Ensure data directory exists
@@ -18,6 +22,8 @@ async function ensureDataDirectory() {
     await fs.access(dataDir);
   } catch {
     await fs.mkdir(dataDir);
+    // Create empty habits.json file
+    await writeHabits([]);
   }
 }
 
@@ -69,13 +75,23 @@ app.get('/api/habits', async (req, res) => {
 // Create new habit
 app.post('/api/habits', async (req, res) => {
   try {
+    const { name, description, frequency } = req.body;
+    
+    // Validate required fields
+    if (!name || !frequency) {
+      return res.status(400).json({ message: 'Name and frequency are required' });
+    }
+
     const habits = await readHabits();
     const newHabit = {
       _id: Date.now().toString(),
-      ...req.body,
+      name,
+      description: description || '',
+      frequency,
       completedDates: [],
       createdAt: new Date().toISOString()
     };
+    
     habits.push(newHabit);
     await writeHabits(habits);
     res.status(201).json(newHabit);
