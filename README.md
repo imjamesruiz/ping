@@ -10,6 +10,10 @@ Plan(t) is a modern, cozy habit tracker inspired by plant growth. It helps you b
 - **Statistics**: View detailed statistics and insights about your habits.
 - **Responsive Design**: Works seamlessly on desktop and mobile devices.
 
+## Ping Feature
+
+- **Ping**: Stay connected with reminders and notifications to keep your habits on track. Ping ensures you never miss a habit-building opportunity.
+
 ## Getting Started
 
 ### Prerequisites
