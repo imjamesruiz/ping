@@ -1,6 +1,6 @@
-# Plan(t) - A Cozy, Plant-Themed Habit Tracker
+# Ping - A Cozy, Plant-Themed Habit Tracker
 
-Plan(t) is a modern, cozy habit tracker inspired by plant growth. It helps you build and track your habits with a beautiful, intuitive interface.
+Ping is a modern, cozy habit tracker inspired by plant growth. It helps you build and track your habits with a beautiful, intuitive interface.
 
 ## Features
 
