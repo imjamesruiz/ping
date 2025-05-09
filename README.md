@@ -1,86 +1,57 @@
-# Plan(t) - Habit Tracking App 🌱
+# Plan(t) - A Cozy, Plant-Themed Habit Tracker
 
-Plan(t) is a beautiful, plant-themed habit tracking application that helps you grow positive habits in your life. Just like plants need consistent care to grow, habits need regular attention to become part of your routine.
+Plan(t) is a modern, cozy habit tracker inspired by plant growth. It helps you build and track your habits with a beautiful, intuitive interface.
 
 ## Features
 
-- **Beautiful Plant-Themed UI**: Enjoy a calming, nature-inspired interface
-- **Habit Management**: Create, track, and manage your habits
-- **Multiple Tracking Frequencies**: Track habits daily, weekly, or monthly
-- **Visual Progress Tracking**: See your habit growth with calendar and statistics views
-- **Motivational Quotes**: Get inspired with wisdom from habit experts like James Clear
-- **Responsive Design**: Works on desktop and mobile devices
+- **Plant-Themed UI**: A cozy, modern design with plant growth metaphors and animations.
+- **Habit Tracking**: Add, edit, and track your daily habits.
+- **Calendar View**: Visualize your habit progress over time.
+- **Statistics**: View detailed statistics and insights about your habits.
+- **Responsive Design**: Works seamlessly on desktop and mobile devices.
 
-## Prerequisites
+## Getting Started
+
+### Prerequisites
 
 - Node.js (v14 or higher)
-- npm or yarn
+- npm (v6 or higher)
 
-## Setup
+### Installation
 
-1. Clone the repository
-2. Install backend dependencies:
+1. Clone the repository:
    ```bash
-   cd server
+   git clone https://github.com/yourusername/plant-habit-tracker.git
+   cd plant-habit-tracker
+   ```
+
+2. Install dependencies:
+   ```bash
    npm install
    ```
 
-3. Install frontend dependencies:
+3. Start the development server:
    ```bash
-   cd client
-   npm install
-   ```
-
-## Running the Application
-
-1. Start the backend server:
-   ```bash
-   cd server
    npm start
    ```
 
-2. Start the frontend development server:
-   ```bash
-   cd client
-   npm start
-   ```
-
-3. Open your browser and navigate to `http://localhost:3000`
+4. Open your browser and navigate to `http://localhost:3000`.
 
 ## Technologies Used
 
-- Frontend:
-  - React
-  - Material UI
-  - Framer Motion (for animations)
-  - React Router
-  - Axios
+- **Frontend**: React, Material-UI
+- **Backend**: Express.js
+- **Database**: MongoDB
 
-- Backend:
-  - Node.js
-  - Express
-  - File-based storage (JSON)
+## Contributing
 
-## API Endpoints
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- GET `/api/habits` - Get all habits
-- POST `/api/habits` - Create a new habit
-- PUT `/api/habits/:id` - Update a habit
-- DELETE `/api/habits/:id` - Delete a habit
-- POST `/api/habits/:id/complete` - Mark a habit as complete
+## License
 
-## Project Structure
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-- `client/` - React frontend application
-  - `src/components/` - React components
-  - `src/styles/` - Theme and styling
-- `server/` - Node.js backend application
-  - `data/` - JSON file storage for habits
+## Acknowledgments
 
-## Recent Updates
-
-- Rebranded to "Plan(t)" with a plant-themed design
-- Added a beautiful home page with feature cards
-- Improved habit tracking functionality
-- Enhanced error handling and user feedback
-- Added success notifications for better user experience
+- Inspired by James Clear's "Atomic Habits"
+- Built with love for plant lovers and habit builders.
