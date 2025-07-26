@@ -1,6 +1,6 @@
-# Ping - A Cozy, Plant-Themed Habit Tracker
+# Ping - A new form of Habit tracking
 
-Ping is a modern, cozy habit tracker inspired by plant growth. It helps you build and track your habits with a beautiful, intuitive interface.
+Ping is a modern, cozy habit tracker. It helps you build and track your habits with a beautiful, intuitive interface.
 
 ## Features
 
